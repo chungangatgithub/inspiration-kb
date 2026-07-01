@@ -5,6 +5,8 @@ import { loadConfig } from '@/lib/config';
 import { DeepSeekClient } from '@/services/deepseek.client';
 import { runDigestionPipeline } from '@/services/digestion/pipeline';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const body = (formData.get('body') as string) || '';

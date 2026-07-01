@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+
 import { CardService } from '@/services/card.service';
 import { loadConfig } from '@/lib/config';
 import { DeepSeekClient } from '@/services/deepseek.client';
 import { runDigestionPipeline } from '@/services/digestion/pipeline';
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(
   _req: NextRequest,

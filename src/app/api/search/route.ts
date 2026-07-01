@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { CardService } from '@/services/card.service';
 import { loadConfig } from '@/lib/config';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   const config = loadConfig();
   const cardService = new CardService(config.dataDir);
