@@ -16,6 +16,7 @@ export interface CardUpdateInput {
   sourceUrl?: string | null;
   sourceTitle?: string | null;
   sourceType?: CardSource["type"];
+  sourceMeta?: Record<string, string> | null;
   body?: string;
   aiTags?: string[];
   aiThemes?: string[];
@@ -173,6 +174,12 @@ export class CardService {
     const rows = this.dbService.filterByTag(tag);
     return rows.map(r => this.fileService.readCard(r.id)).filter(Boolean) as Card[];
   }
+
+  filterByType(type: string): Card[] {
+    const rows = this.dbService.filterByType(type);
+    return rows.map(r => this.fileService.readCard(r.id)).filter(Boolean) as Card[];
+  }
+
 
   close(): void {
     this.dbService.close();
