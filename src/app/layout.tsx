@@ -1,8 +1,9 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Inspiration KB",
-  description: "Knowledge base for creative inspiration",
+  title: "灵感知识库",
+  description: "Inspiration knowledge base",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -11,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="zh-CN">
       <body>{children}</body>
     </html>
   );
