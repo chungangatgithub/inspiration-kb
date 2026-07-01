@@ -126,6 +126,7 @@ export class CardService {
     if (input.sourceUrl !== undefined) card.source.url = input.sourceUrl;
     if (input.sourceTitle !== undefined) card.source.title = input.sourceTitle;
     if (input.sourceType !== undefined) card.source.type = input.sourceType;
+    if (input.sourceMeta !== undefined) card.source.meta = input.sourceMeta;
     if (input.body !== undefined) this.fileService.writeBody(id, input.body);
     if (input.aiTags !== undefined) card.ai_tags = input.aiTags;
     if (input.aiThemes !== undefined) card.ai_themes = input.aiThemes;

@@ -1,0 +1,5 @@
+Write a one-sentence Chinese summary of the following content. Maximum 50 characters. Be concise and capture the core idea.
+
+Content: {body}
+
+Respond with the summary text only, no JSON wrapper.

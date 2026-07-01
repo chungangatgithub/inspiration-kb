@@ -1,0 +1,15 @@
+Analyze the following content and determine its source type. Return ONLY a JSON object with a single field "type".
+
+Valid types:
+- "webpage": general web article or blog post
+- "video": video content reference
+- "book": novel, book, or literary work
+- "social_post": social media post (Weibo, Tieba, Xiaohongshu, etc.)
+- "game": game-related content
+- "screenshot": this appears to be a screenshot from an app
+- "thought": pure personal thought or idea with no external source
+
+Content: {body}
+User's note: {userNote}
+
+Respond with JSON only: {"type": "..."}

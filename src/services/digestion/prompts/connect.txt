@@ -1,0 +1,10 @@
+The current card has:
+- Summary: {summary}
+- Tags: {tags}
+
+Compare this card against the following existing cards. Find meaningful connections (shared topics, complementary ideas, related subjects). For each connection, provide the target card's id and a brief reason in Chinese.
+
+Existing cards (JSON array): {existingCards}
+
+Respond with JSON only: [{"cardId": "...", "reason": "..."}, ...]
+End with an empty array if no connections found.

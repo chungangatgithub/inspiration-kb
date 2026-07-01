@@ -1,0 +1,14 @@
+Analyze the following content and extract a title and type-specific metadata. Return ONLY a JSON object.
+
+If the content type is "{type}", extract relevant metadata fields. For example:
+- "webpage": author, site, published_date
+- "video": platform, channel, duration
+- "book": author, publisher, year
+- "social_post": platform, author
+- "game": title, developer, platform
+- "screenshot": app_name, context
+- "thought": (empty object is fine)
+
+Content: {body}
+
+Respond with JSON only: {"title": "extracted title or null", "meta": { ... }}

@@ -1,0 +1,6 @@
+Generate 3-8 concise, relevant tags for the following content. Tags should be lowercase, single words or short compound phrases in English. Return ONLY a JSON array of strings.
+
+Content type: {type}
+Content: {body}
+
+Respond with JSON only: ["tag1", "tag2", ...]

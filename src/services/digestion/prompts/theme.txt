@@ -1,0 +1,5 @@
+Identify 1-3 high-level themes for the following content. Themes should be broad conceptual categories in English. If the content fits into any of these existing themes, prefer reusing them: {existingThemes}
+
+Content: {body}
+
+Respond with JSON only: ["theme1", "theme2", ...]
