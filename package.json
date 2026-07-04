@@ -2,6 +2,29 @@
   "name": "inspiration-kb",
   "version": "0.1.0",
   "private": true,
+  "description": "跨平台灵感捕获与知识沉淀工具 — 全格式存入，AI 自动消化，统一画布浏览",
+  "author": "chungangatgithub <2572619301@qq.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chungangatgithub/inspiration-kb.git"
+  },
+  "homepage": "https://github.com/chungangatgithub/inspiration-kb#readme",
+  "bugs": {
+    "url": "https://github.com/chungangatgithub/inspiration-kb/issues"
+  },
+  "keywords": [
+    "knowledge-base",
+    "inspiration",
+    "note-taking",
+    "ai",
+    "deepseek",
+    "electron",
+    "nextjs",
+    "local-first",
+    "pkm",
+    "canvas"
+  ],
   "scripts": {
     "dev": "concurrently \"next dev\" \"electron .\"",
     "build": "next build && electron-builder",
