@@ -55,33 +55,42 @@ export async function runDigestionPipeline(
     partial = true;
   }
 
-  // Step 3: Tag
-  try {
-    const tags = await tag(client, { body, type: sourceType ?? "unknown" });
-    cardService.update(cardId, { aiTags: tags });
-  } catch {
-    partial = true;
-  }
+	  // Step 3: Tag
+	  try {
+	    const tags = await tag(client, { body, type: sourceType ?? "unknown" });
+	    if (tags.length === 0) {
+	      partial = true;
+	    }
+	    cardService.update(cardId, { aiTags: tags });
+	  } catch {
+	    partial = true;
+	  }
 
-  // Step 4: Theme
-  try {
-    const allCards = cardService.listAll();
-    const existingThemes = Array.from(
-      new Set(allCards.flatMap(c => c.ai_themes)),
-    );
-    const themes = await theme(client, { body, existingThemes });
-    cardService.update(cardId, { aiThemes: themes });
-  } catch {
-    partial = true;
-  }
+	  // Step 4: Theme
+	  try {
+	    const allCards = cardService.listAll();
+	    const existingThemes = Array.from(
+	      new Set(allCards.flatMap(c => c.ai_themes)),
+	    );
+	    const themes = await theme(client, { body, existingThemes });
+	    if (themes.length === 0) {
+	      partial = true;
+	    }
+	    cardService.update(cardId, { aiThemes: themes });
+	  } catch {
+	    partial = true;
+	  }
 
-  // Step 5: Summarize
-  try {
-    const summary = await summarize(client, { body });
-    cardService.update(cardId, { aiSummary: summary });
-  } catch {
-    partial = true;
-  }
+	  // Step 5: Summarize
+	  try {
+	    const summary = await summarize(client, { body });
+	    if (!summary) {
+	      partial = true;
+	    }
+	    cardService.update(cardId, { aiSummary: summary });
+	  } catch {
+	    partial = true;
+	  }
 
   // Step 6: Connect
   try {

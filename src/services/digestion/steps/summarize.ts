@@ -15,5 +15,8 @@ export async function summarize(
 
   const response = await client.chat(prompt, input.body);
   const result = response.trim();
-  return result.length > 0 ? (result.length <= 50 ? result : result.slice(0, 50)) : null;
+	  if (result.length === 0) return null;
+	  // Safely truncate by code points to avoid breaking multi-byte characters
+	  const chars = Array.from(result);
+	  return chars.length <= 50 ? result : chars.slice(0, 50).join('');
 }

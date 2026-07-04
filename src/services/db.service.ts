@@ -105,7 +105,7 @@ export class DatabaseService {
   }
 
   getAllCards(): CardRow[] {
-    return this.db.prepare("SELECT * FROM cards ORDER BY captured_at DESC").all() as CardRow[];
+    return this.db.prepare("SELECT * FROM cards ORDER BY captured_at DESC, id DESC").all() as CardRow[];
   }
 
   search(query: string): CardRow[] {

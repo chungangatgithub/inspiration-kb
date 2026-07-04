@@ -115,7 +115,7 @@ export class CardService {
       const card = this.fileService.readCard(id);
       if (card) cards.push(card);
     }
-    cards.sort((a, b) => b.captured_at.localeCompare(a.captured_at));
+    cards.sort((a, b) => b.captured_at.localeCompare(a.captured_at) || b.id.localeCompare(a.id));
     return cards;
   }
 
@@ -180,6 +180,12 @@ export class CardService {
     return rows.map(r => this.fileService.readCard(r.id)).filter(Boolean) as Card[];
   }
 
+  /** List all cards using DB index instead of reading every card.json file.
+   *  Returns full Card objects — still reads JSON for connections/attachments. */
+  listAllFromDB(): Card[] {
+    const rows = this.dbService.getAllCards();
+    return rows.map(r => this.fileService.readCard(r.id)).filter(Boolean) as Card[];
+  }
 
   close(): void {
     this.dbService.close();

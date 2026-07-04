@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 
-import { CardService } from '@/services/card.service';
+import { getCardService } from '@/services/singleton';
 import { loadConfig } from '@/lib/config';
 import { DeepSeekClient } from '@/services/deepseek.client';
 import { runDigestionPipeline } from '@/services/digestion/pipeline';
@@ -16,7 +16,7 @@ export async function POST(
   if (!config.deepseekApiKey) {
     return NextResponse.json({ error: 'API key not configured' }, { status: 400 });
   }
-  const cardService = new CardService(config.dataDir);
+  const cardService = getCardService(config.dataDir);
   const card = cardService.getById(params.id);
   if (!card) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 

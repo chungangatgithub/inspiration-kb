@@ -4,3 +4,4 @@ out/
 dist/
 *.db
 .DS_Store
+test-results/

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as fs from 'fs';
-import { CardService } from '@/services/card.service';
+import { getCardService } from '@/services/singleton';
 import { loadConfig } from '@/lib/config';
 import { DeepSeekClient } from '@/services/deepseek.client';
 import { runDigestionPipeline } from '@/services/digestion/pipeline';
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   const files = formData.getAll('attachments') as File[];
 
   const config = loadConfig();
-  const cardService = new CardService(config.dataDir);
+  const cardService = getCardService(config.dataDir);
 
   const attachments: { sourcePath: string; filename: string }[] = [];
   for (const file of files) {

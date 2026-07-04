@@ -1,6 +1,6 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { X, Save } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { X, Save, Loader2 } from 'lucide-react';
 import { useCanvasStore } from '@/stores/canvas.store';
 import { TypeIcon } from '@/components/shared/TypeIcon';
 import type { Card } from '@/types/card';
@@ -9,6 +9,7 @@ export function CardDetailSheet() {
   const { selectedCardId, selectCard, cards } = useCanvasStore();
   const [body, setBody] = useState<string | null>(null);
   const [card, setCard] = useState<Card | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [editing, setEditing] = useState<{
     ai_tags: string;
     ai_themes: string;
@@ -25,14 +26,25 @@ export function CardDetailSheet() {
     user_review: '',
   });
   const [saving, setSaving] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Load card when selection changes
   useEffect(() => {
     if (!selectedCardId) {
       setCard(null);
       setBody(null);
+      setIsLoading(false);
       return;
     }
+
+    // Cancel previous in-flight request
+    if (abortRef.current) {
+      abortRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    setIsLoading(true);
 
     // First check store
     const found = cards.find((c) => c.id === selectedCardId);
@@ -49,16 +61,25 @@ export function CardDetailSheet() {
     }
 
     // Fetch body
-    fetch(`/api/cards/${selectedCardId}`)
+    fetch(`/api/cards/${selectedCardId}`, { signal: controller.signal })
       .then((r) => r.json())
       .then((data) => {
+        if (controller.signal.aborted) return;
         setCard((prev) => (prev ? { ...prev, ...data } : data));
         if (data.body) setBody(data.body);
+        setIsLoading(false);
       })
-      .catch(() => {});
+      .catch((err) => {
+        if (err.name === 'AbortError') return;
+        setIsLoading(false);
+      });
+
+    return () => {
+      controller.abort();
+    };
   }, [selectedCardId, cards]);
 
-  if (!selectedCardId || !card) return null;
+  if (!selectedCardId) return null;
 
   const handleSave = async (field: string) => {
     setSaving(true);
@@ -92,24 +113,35 @@ export function CardDetailSheet() {
   };
 
   return (
-    <aside className="absolute top-0 right-0 h-full w-80 bg-white border-l border-gray-200 shadow-lg overflow-y-auto z-10">
+    <aside className="absolute top-0 right-0 h-full w-full sm:w-80 bg-white border-l border-gray-200 shadow-lg overflow-y-auto z-10 animate-slide-in-right">
       {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b">
-        <div className="flex items-center gap-2">
-          <TypeIcon type={card.source.type} size={16} />
-          <span className="text-sm font-medium text-gray-700">
-            {card.source.title || '未命名灵感'}
+      <div className="flex items-center justify-between p-3 border-b sticky top-0 bg-white z-10">
+        <div className="flex items-center gap-2 min-w-0">
+          <TypeIcon type={card?.source.type ?? null} />
+          <span className="text-sm font-medium text-gray-700 truncate">
+            {card?.source.title || '未命名灵感'}
           </span>
         </div>
         <button
           onClick={() => selectCard(null)}
-          className="p-1 rounded hover:bg-gray-100"
+          className="p-1 rounded hover:bg-gray-100 flex-shrink-0"
           aria-label="关闭"
         >
           <X size={16} />
         </button>
       </div>
 
+      {isLoading && !card ? (
+        /* Loading skeleton */
+        <div className="p-3 space-y-4 animate-pulse">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="space-y-2">
+              <div className="h-3 w-16 bg-gray-100 rounded" />
+              <div className="h-8 w-full bg-gray-50 rounded" />
+            </div>
+          ))}
+        </div>
+      ) : card ? (
       <div className="p-3 space-y-4">
         {/* Source info */}
         <section>
@@ -146,6 +178,9 @@ export function CardDetailSheet() {
                 : 'bg-gray-100 text-gray-500'
             }`}
           >
+            {card.digestion_status === 'processing' && (
+              <Loader2 className="w-3 h-3 inline mr-1 animate-spin" />
+            )}
             {card.digestion_status}
           </span>
         </section>
@@ -201,6 +236,7 @@ export function CardDetailSheet() {
           </p>
         </section>
       </div>
+      ) : null}
     </aside>
   );
 }

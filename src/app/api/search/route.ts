@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { CardService } from '@/services/card.service';
+import { getCardService } from '@/services/singleton';
 import { loadConfig } from '@/lib/config';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   const config = loadConfig();
-  const cardService = new CardService(config.dataDir);
+  const cardService = getCardService(config.dataDir);
   const q = req.nextUrl.searchParams.get('q') || '';
   const theme = req.nextUrl.searchParams.get('theme');
   const tag = req.nextUrl.searchParams.get('tag');
@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
   } else if (type) {
     cards = cardService.filterByType(type);
   } else {
-    cards = cardService.listAll();
+    cards = cardService.listAllFromDB();
   }
 
   return NextResponse.json(cards);

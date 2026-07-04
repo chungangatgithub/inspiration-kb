@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, type FormEvent } from 'react';
-import { Send } from 'lucide-react';
+import { Send, Loader2 } from 'lucide-react';
 import { FileDropZone } from './FileDropZone';
 
 export function CaptureForm() {
@@ -10,7 +10,12 @@ export function CaptureForm() {
   const [userNote, setUserNote] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  const showToast = useCallback((message: string, type: 'success' | 'error') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  }, []);
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
@@ -39,29 +44,36 @@ export function CaptureForm() {
         });
 
         if (res.ok) {
-          // Clear form
           setBody('');
           setSourceUrl('');
           setUserNote('');
           setFiles([]);
-
-          // Show toast
-          setToast('已保存');
-          setTimeout(() => setToast(null), 2000);
+          showToast('已保存', 'success');
+        } else {
+          const err = await res.json().catch(() => ({}));
+          showToast((err as { error?: string }).error || `保存失败 (${res.status})`, 'error');
         }
+      } catch {
+        showToast('网络错误，请检查连接后重试', 'error');
       } finally {
         setSubmitting(false);
       }
     },
-    [body, sourceUrl, userNote, files],
+    [body, sourceUrl, userNote, files, showToast],
   );
 
   return (
     <div className="relative">
       {/* Toast */}
       {toast && (
-        <div className="fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg text-sm z-50">
-          {toast}
+        <div
+          className={`fixed top-4 right-4 px-4 py-2 rounded shadow-lg text-sm z-50 transition-all duration-300 animate-in ${
+            toast.type === 'success'
+              ? 'bg-green-600 text-white'
+              : 'bg-red-600 text-white'
+          }`}
+        >
+          {toast.message}
         </div>
       )}
 
@@ -105,8 +117,17 @@ export function CaptureForm() {
           disabled={submitting || (!body.trim() && files.length === 0)}
           className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white font-medium py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          <Send className="w-4 h-4" />
-          {submitting ? '保存中...' : '保存'}
+          {submitting ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              保存中...
+            </>
+          ) : (
+            <>
+              <Send className="w-4 h-4" />
+              保存
+            </>
+          )}
         </button>
       </form>
     </div>
